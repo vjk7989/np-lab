@@ -1,0 +1,57 @@
+import javax.net.ssl.*;
+import java.io.*;
+import java.net.*;
+
+public class SecureServer {
+    public static void main(String[] args) {
+        try {
+            // Set up key manager with server keystore
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+            KeyStore ks = KeyStore.getInstance("JKS");
+            ks.load(new FileInputStream("server.keystore"), "your_keystore_password".toCharArray());
+            kmf.init(ks, "your_keystore_password".toCharArray());
+
+            // Configure SSL context with specified cipher suites
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(kmf.getKeyManagers(), null, null);
+
+            SSLServerSocketFactory ssf = sslContext.getServerSocketFactory();
+            SSLServerSocket serverSocket = (SSLServerSocket) ssf.createServerSocket(8443);
+
+            // Set enabled cipher suites
+            serverSocket.setEnabledCipherSuites(new String[]{
+                "TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256",
+                "TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256",
+                "TLS_DHE_RSA_WITH_AES_128_CBC_SHA256",
+                "TLS_DHE_DSS_WITH_AES_128_CBC_SHA256",
+                "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+                "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+                "TLS_RSA_WITH_AES_128_CBC_SHA"
+            });
+
+            System.out.println("Secure server is running on port 8443");
+
+            while (true) {
+                SSLSocket clientSocket = (SSLSocket) serverSocket.accept();
+                handleClient(clientSocket);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void handleClient(SSLSocket clientSocket) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
+
+            String received = in.readLine();
+            System.out.println("Received from client: " + received);
+
+            out.println("Hello from the secure server");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
