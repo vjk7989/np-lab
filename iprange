@@ -1,0 +1,56 @@
+import java.net.*;
+import java.util.*;
+
+public class FindNetworkInterfacesInRange {
+
+    public static void main(String[] args) {
+        try {
+            // Define the start and end of the IP address range
+            InetAddress start = InetAddress.getByName("192.168.1.1");
+            InetAddress end = InetAddress.getByName("192.168.1.150");
+
+            // Get a list of all network interfaces
+            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+
+            while (networkInterfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = networkInterfaces.nextElement();
+                Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+
+                while (inetAddresses.hasMoreElements()) {
+                    InetAddress inetAddress = inetAddresses.nextElement();
+
+                    // Check if the address is within the defined range
+                    if (isInRange(inetAddress, start, end)) {
+                        System.out.println("Network Interface: " + networkInterface.getName());
+                        System.out.println("IP Address: " + inetAddress.getHostAddress());
+                    }
+                }
+            }
+
+        } catch (SocketException | UnknownHostException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Helper method to check if an IP address is within a given range
+    private static boolean isInRange(InetAddress target, InetAddress start, InetAddress end) {
+        byte[] targetBytes = target.getAddress();
+        byte[] startBytes = start.getAddress();
+        byte[] endBytes = end.getAddress();
+
+        // Ensure the IP addresses are of the same type (IPv4 or IPv6)
+        if (targetBytes.length != startBytes.length || targetBytes.length != endBytes.length) {
+            return false;
+        }
+
+        boolean inRange = true;
+        for (int i = 0; i < targetBytes.length; i++) {
+            if (targetBytes[i] < startBytes[i] || targetBytes[i] > endBytes[i]) {
+                inRange = false;
+                break;
+            }
+        }
+
+        return inRange;
+    }
+}
