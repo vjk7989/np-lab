@@ -1,0 +1,46 @@
+import javax.net.ssl.*;
+import java.io.*;
+import java.net.*;
+
+public class SecureClient {
+    public static void main(String[] args) {
+        try {
+            // Set up trust manager with client's truststore
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+            KeyStore ts = KeyStore.getInstance("JKS");
+            ts.load(new FileInputStream("client.truststore"), "your_truststore_password".toCharArray());
+            tmf.init(ts);
+
+            // Configure SSL context
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, tmf.getTrustManagers(), null);
+
+            SSLSocketFactory ssf = sslContext.getSocketFactory();
+            SSLSocket sslSocket = (SSLSocket) ssf.createSocket("localhost", 8443);
+
+            // Set enabled cipher suites
+            sslSocket.setEnabledCipherSuites(new String[]{
+                "TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256",
+                "TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256",
+                "TLS_DHE_RSA_WITH_AES_128_CBC_SHA256",
+                "TLS_DHE_DSS_WITH_AES_128_CBC_SHA256",
+                "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+                "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+                "TLS_RSA_WITH_AES_128_CBC_SHA"
+            });
+
+            PrintWriter out = new PrintWriter(sslSocket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()));
+
+            out.println("Hello from the secure client");
+
+            String response = in.readLine();
+            System.out.println("Received from server: " + response);
+
+            sslSocket.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
