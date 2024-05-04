@@ -1,0 +1,867 @@
+1Q 
+
+A. perform read/write operations on a file
+B. Find the number of characters in a file
+C. Find a specific file word and replace it with other word in the complete file
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class FileRead {
+    public static void main(String[] args) {
+        // Write to a file
+        writeToFile("reader.txt", "Siddhartha sukhavasi from VIT-AP.\n21BCE7782.");
+
+        // Read from a file
+        String content = readFromFile("reader.txt");
+        System.out.println("Content read from file:\n" + content);
+    }
+
+    // Method to write content to a file
+    private static void writeToFile(String fileName, String content) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            writer.write(content);
+            System.out.println("Content successfully written to file: " + fileName);
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
+
+    // Method to read content from a file
+    private static String readFromFile(String fileName) {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading from file: " + e.getMessage());
+        }
+        return content.toString();
+    }
+}
+
+
+
+2Q 
+import java.io.*;
+//ascii big letter using int method
+public class Asint {
+
+    public static void main(String[] args) throws IOException {
+        int charsPerLine = 72;
+        int end = 200;
+        int start = 0;
+
+        // Create output stream for the file
+        try (OutputStream outputStream = new FileOutputStream("intwrite.txt")) {
+            System.out.println("Writing using write(int):");
+
+            while (start <= end) {
+                for (int i = 0; i < charsPerLine; i++) {
+                    int startChar = 34 + i;
+
+                    int endChar = startChar + charsPerLine - 1;
+
+                    // Ensure endChar is capped at 126
+                    if (endChar > 126) {
+                        endChar = 126;
+                    }
+
+                    for (int j = startChar; j <= endChar; j++) {
+                        outputStream.write(j);
+                    }
+
+                    // Write new line character
+                    outputStream.write(10);
+
+                    // Check if the line is printed, and terminate if true
+                    if (endChar >= 126) {
+                        break;
+                    }
+                }
+                start++;
+            }
+        }
+    }
+
+3Q 
+  Use the input stream class to solve the following problem
+a.	Read the characters from a file using read() method
+b.	 Read the characters from a file using read(byte[]), read(byte[],offset,length)
+c.	Ignore first 100 characters from the file in the read operation
+d.	How the available() method is used in file read operations
+
+3 a
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+// read content of file using input steam
+public class FileReadIS {
+    public static void main(String[] args) {
+        try (InputStream in = new FileInputStream("reader.txt")) {
+            int data;
+            while ((data = in.read()) != -1) {
+                char character = (char) data;
+                System.out.print(character);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+3  b :
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+//file read using byte 
+public class FileReadBY {
+    public static void main(String[] args) {
+        try (InputStream in = new FileInputStream("reader.txt")) {
+           
+            byte[] buffer1 = new byte[1024]; 
+            int bytesRead1;
+            while ((bytesRead1 = in.read(buffer1)) != -1) {
+                String characters1 = new String(buffer1, 0, bytesRead1);
+                System.out.print(characters1);
+            }
+
+          
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+3 c :
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+//3 c skip 100 chars
+public class FileReadSkip {
+    public static void main(String[] args) {
+        try (InputStream in = new FileInputStream("novel.txt")) {
+          
+            long skipped = in.skip(100);
+            System.out.println("Skipped " + skipped + " characters.");
+
+            
+            byte[] buffer1 = new byte[1024]; 
+            int bytesRead1;
+            while ((bytesRead1 = in.read(buffer1)) != -1) {
+                String characters1 = new String(buffer1, 0, bytesRead1);
+                System.out.print(characters1);
+            }
+           
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+3 d :
+
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+public class FileReadAvailable{
+
+    public static void main(String[] args) {
+        try (InputStream inputStream = new FileInputStream("novel.txt")) {
+            int availableBytes = inputStream.available();
+            
+            System.out.println("Available Bytes: " + availableBytes);
+
+            byte[] data = new byte[availableBytes];
+            
+         
+            int bytesRead = inputStream.read(data);
+            
+            System.out.println("Bytes Read: " + bytesRead);
+
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+4
+.
+LAB-5 (3-2-2024)
+1.	Explore all uri class methods and url class methods
+
+Code:
+
+import java.net.URL;
+import java.net.MalformedURLException;
+
+public class URLDemo {
+    public static void main(String[] args) {
+        try {
+            // Creating a URL object
+            URL url = new URL("https://www.youtube.com/watch?v=FhOumaSI_DI&list=PLwLSw1_eDZl22NzEffbakJYVXiiWas9KH");
+
+            // Methods of URL class
+            System.out.println("Protocol: " + url.getProtocol());
+            System.out.println("Host: " + url.getHost());
+            System.out.println("Port: " + url.getPort());
+            System.out.println("Path: " + url.getPath());
+            System.out.println("File: " + url.getFile());
+            System.out.println("Query: " + url.getQuery());
+            System.out.println("Authority: " + url.getAuthority());
+            System.out.println("UserInfo: " + url.getUserInfo());
+            System.out.println("Ref: " + url.getRef());
+            System.out.println("Default Port: " + url.getDefaultPort());
+     
+
+        
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+
+Output:
+
+ 
+
+
+2.	Convert url to uri
+
+Code:
+
+import java.net.URI;
+import java.net.URL;
+import java.net.MalformedURLException;
+
+public class URLtoURIdemo {
+    public static void main(String[] args) {
+        try {
+           
+            URL url = new URL("https://www.youtube.com/watch?v=FhOumaSI_DI&list=PLwLSw1_eDZl22NzEffbakJYVXiiWas9KH");
+
+            URI uri = url.toURI();
+
+      
+            System.out.println("URI: " + uri);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+Output:
+
+ 
+
+3.	Find the network interfaces which are assigned to 192.168.1.1 to 192.168.1.150 address range
+
+Code:
+
+
+4.	Explore all NetworkInterface class  methods 
+
+Code:
+
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
+
+public class Nifdemo {
+    public static void main(String[] args) {
+        try {
+            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (networkInterfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = networkInterfaces.nextElement();
+                
+                System.out.println("Name: " + networkInterface.getName());
+                System.out.println("Display Name: " + networkInterface.getDisplayName());
+                System.out.println("Index: " + networkInterface.getIndex());
+                System.out.println("Hardware Address: " + formatMACAddress(networkInterface.getHardwareAddress()));
+                System.out.println("MTU: " + networkInterface.getMTU());
+                System.out.println("Parent: " + (networkInterface.getParent() != null ? networkInterface.getParent().getName() : "None"));
+                System.out.println("Is Up: " + networkInterface.isUp());
+                System.out.println("Is Loopback: " + networkInterface.isLoopback());
+                System.out.println("Is Point-to-Point: " + networkInterface.isPointToPoint());
+                System.out.println("Supports Multicast: " + networkInterface.supportsMulticast());
+                System.out.println("Is Virtual: " + networkInterface.isVirtual());
+                
+                Enumeration<NetworkInterface> subInterfaces = networkInterface.getSubInterfaces();
+                while (subInterfaces.hasMoreElements()) {
+                    NetworkInterface subInterface = subInterfaces.nextElement();
+                    System.out.println("Subinterface: " + subInterface.getName());
+                }
+                
+                System.out.println();
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String formatMACAddress(byte[] macAddress) {
+        if (macAddress == null) {
+            return "None";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < macAddress.length; i++) {
+            sb.append(String.format("%02X%s", macAddress[i], (i < macAddress.length - 1) ? ":" : ""));
+        }
+        return sb.toString();
+    }
+}
+
+
+
+
+5.. you have been asked to develop connect to the url and set the following connection configurations,
+1.	Allow user interaction
+2.	Dont allow read operations
+3.	Allow Write operations
+4.	Disable the Chache
+5.	Set the connection timeout to 5000 sec
+6.	Set the read connection timeout to 2000sec
+You have to print connection configuration settings before and after connection configuration
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class URLConfig {
+    public static void main(String[] args) {
+        String urlString = "https://www.freecodecamp.org/news/cloud-storage-options/";
+
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+       
+            printConnectionConfigurations(connection);
+
+       
+            connection.setDoInput(false); 
+            connection.setDoOutput(true);
+            connection.setAllowUserInteraction(true); 
+            connection.setUseCaches(false);
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(2000);
+
+           
+            System.out.println("\nConnection configurations after setting:");
+            printConnectionConfigurations(connection);
+
+           
+            connection.connect();
+
+            
+            connection.disconnect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void printConnectionConfigurations(HttpURLConnection connection) {
+        System.out.println("Allow User Interaction: " + connection.getAllowUserInteraction());
+        System.out.println("Do Input: " + connection.getDoInput());
+        System.out.println("Do Output: " + connection.getDoOutput());
+        System.out.println("Use Caches: " + connection.getUseCaches());
+        System.out.println("Connection Timeout: " + connection.getConnectTimeout() + " milliseconds");
+        System.out.println("Read Timeout: " + connection.getReadTimeout() + " milliseconds");
+    }
+}
+
+
+
+
+
+
+7.
+1.	Write the client and server programs, where two are more clients sends request to the server to get the time of the server as a response message for the client request.
+
+Server Code:
+import java.io.*;
+import java.net.*;
+import java.util.Date;
+
+public class TwoclientServer{
+    public static void main(String[] args) {
+        try {
+            ServerSocket serverSocket = new ServerSocket(12345); 
+            System.out.println("Server is running and waiting for clients...");
+
+            int clientCount = 0;
+
+            while (clientCount < 2) { 
+                Socket clientSocket = serverSocket.accept(); 
+                clientCount++;
+                System.out.println("Client " + clientCount + " connected: " + clientSocket);
+
+                // Create a new thread to handle the client
+                ClientHandler handler = new ClientHandler(clientSocket, clientCount);
+                handler.start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class ClientHandler extends Thread {
+    private Socket clientSocket;
+    private int clientNumber;
+
+    public ClientHandler(Socket socket, int clientNumber) {
+        this.clientSocket = socket;
+        this.clientNumber = clientNumber;
+    }
+
+    public void run() {
+        try {
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            out.println("Hello Client " + clientNumber + ", the server time is: " + new Date().toString()); // Send current time to the client
+            out.close();
+            clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+Client1 code:
+import java.io.*;
+import java.net.*;
+
+public class TwoclientClient1 {
+    public static void main(String[] args) {
+        try {
+            Socket socket = new Socket("localhost", 12345); // Connect to the server running on localhost at port 12345
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String serverResponse = in.readLine(); // Read the server's response
+            System.out.println("Server response to Client 1: " + serverResponse);
+
+            in.close();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+Client 2:
+import java.io.*;
+import java.net.*;
+
+public class TwoclientClient2 {
+    public static void main(String[] args) {
+        try {
+            Socket socket = new Socket("localhost", 12345); // Connect to the server running on localhost at port 12345
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String serverResponse = in.readLine(); // Read the server's response
+            System.out.println("Server response to Client 2: " + serverResponse);
+
+            in.close();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+8.
+Show the network connection permanence difference between socket without socket options and the with sockets options 
+•TCP_NODELAY
+•SO_BINDADDR
+• SO_TIMEOUT
+•SO_LINGER
+•SO_SNDBUF
+•SO_RCVBUF
+•SO_KEEPALIVE
+OOBINLINE • IP_TOS
+
+Code:
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class SocketServer {
+
+    public static void main(String[] args) {
+        try {
+            ServerSocket serverSocket = new ServerSocket(12345); 
+            System.out.println("Server is running waiting for the client");
+
+            
+            Socket socket = serverSocket.accept();
+            System.out.println("Client connected.");
+
+            
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String message = reader.readLine();
+            System.out.println("Received message from client: " + message);
+
+           
+            reader.close();
+            socket.close();
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+Client Code:
+
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+public class SocketClient {
+
+    public static void main(String[] args) {
+        try {
+           
+            Socket socket = new Socket(InetAddress.getLocalHost(), 12345); 
+            System.out.println("Connected to server.");
+
+          
+            socket.setTcpNoDelay(true); 
+            socket.setSoTimeout(5000); 
+            socket.setKeepAlive(true); 
+            socket.setOOBInline(true); 
+            socket.setSendBufferSize(8192); 
+            socket.setReceiveBufferSize(8192); 
+            socket.setSoLinger(true, 10); 
+            socket.setTrafficClass(0x10); 
+
+           
+            PrintWriter writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+            writer.println("Hello from client!");
+
+           
+            writer.close();
+            socket.close();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+9.
+Find the all supported cipher suites in the client and server programs.
+Enable the following cipher suites for secure client and server communication:
+TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256
+• TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256
+• TLS_DHE_RSA_WITH_AES_128_CBC_SHA256
+• TLS_DHE_DSS_WITH_AES_128_CBC_SHA256
+• TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+• TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+• TLS_RSA_WITH_AES_128_CBC_SHA
+Generate the ssl certificate using keytool using command line
+
+Code: 
+Server Code:
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+
+public class SSLEchoServer {
+    public static void main(String[] args) {
+        try {
+            SSLServerSocketFactory serverSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+            SSLServerSocket serverSocket = (SSLServerSocket) serverSocketFactory.createServerSocket(9999);
+
+            // Enable the desired cipher suites
+            String[] enabledCipherSuites = {
+                    "TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256",
+                    "TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256",
+                    "TLS_DHE_RSA_WITH_AES_128_CBC_SHA256",
+                    "TLS_DHE_DSS_WITH_AES_128_CBC_SHA256",
+                    "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+                    "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+                    "TLS_RSA_WITH_AES_128_CBC_SHA"
+            };
+            serverSocket.setEnabledCipherSuites(enabledCipherSuites);
+
+            System.out.println("Server started. Waiting for client...");
+
+            SSLSocket clientSocket = (SSLSocket) serverSocket.accept();
+            System.out.println("Client connected.");
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
+
+            String message;
+            while ((message = reader.readLine()) != null) {
+                System.out.println("Received from client: " + message);
+                writer.println("Server Echo: " + message);
+            }
+
+            clientSocket.close();
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+Client code:
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+
+public class SSLEchoClient {
+    public static void main(String[] args) {
+        try {
+            SSLSocketFactory socketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+
+            // Enable the desired cipher suites
+            String[] enabledCipherSuites = {
+                "TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256",
+                "TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256",
+                "TLS_DHE_RSA_WITH_AES_128_CBC_SHA256",
+                "TLS_DHE_DSS_WITH_AES_128_CBC_SHA256",
+                "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+                "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+                "TLS_RSA_WITH_AES_128_CBC_SHA"
+            };
+
+            SSLSocket socket = (SSLSocket) socketFactory.createSocket("localhost", 9999);
+
+            socket.setEnabledCipherSuites(enabledCipherSuites);
+
+            System.out.println("Connected to server.");
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
+
+            String message;
+            while (true) {
+                System.out.print("Enter message to send to server: ");
+                message = consoleReader.readLine();
+                writer.println(message);
+
+                String response = reader.readLine();
+                System.out.println("Server response: " + response);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+Certificate generation:
+keytool -genkeypair -keyalg RSA -keysize 2048 -alias mycert -keystore keystore.jks -validity 3650
+
+
+10. udp 
+import java.io.*;
+import java.net.*;
+import java.util.Arrays;
+
+public class UDPServer {
+    public static void main(String[] args) {
+        final int PORT = 9876;
+        
+        try {
+            DatagramSocket serverSocket = new DatagramSocket(PORT);
+            System.out.println("Server is running...");
+
+            byte[] receiveData = new byte[1024];
+            byte[] sendData = new byte[1024];
+
+            while (true) {
+                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                serverSocket.receive(receivePacket);
+                
+                String numbersString = new String(receivePacket.getData(), 0, receivePacket.getLength());
+                String[] numbersArray = numbersString.split(",");
+                int[] numbers = new int[numbersArray.length];
+                
+                for (int i = 0; i < numbersArray.length; i++) {
+                    numbers[i] = Integer.parseInt(numbersArray[i]);
+                }
+
+                Arrays.sort(numbers);
+
+                StringBuilder sortedNumbersBuilder = new StringBuilder();
+                for (int number : numbers) {
+                    sortedNumbersBuilder.append(number).append(",");
+                }
+
+                sendData = sortedNumbersBuilder.toString().getBytes();
+                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, receivePacket.getAddress(), receivePacket.getPort());
+                serverSocket.send(sendPacket);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+Client:
+import java.io.*;
+import java.net.*;
+
+public class UDPClient {
+    public static void main(String[] args) {
+        final String SERVER_IP = "127.0.0.1";
+        final int SERVER_PORT = 9876;
+
+        try {
+            DatagramSocket clientSocket = new DatagramSocket();
+            InetAddress serverAddress = InetAddress.getByName(SERVER_IP);
+
+            int[] numbers = {5, 3, 9, 1, 7};
+            String numbersString = "";
+            for (int number : numbers) {
+                numbersString += number + ",";
+            }
+
+            byte[] sendData = numbersString.getBytes();
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, serverAddress, SERVER_PORT);
+            clientSocket.send(sendPacket);
+
+            byte[] receiveData = new byte[1024];
+            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+            clientSocket.receive(receivePacket);
+
+            String sortedNumbersString = new String(receivePacket.getData(), 0, receivePacket.getLength());
+            String[] sortedNumbersArray = sortedNumbersString.split(",");
+            System.out.print("Sorted numbers received from server: ");
+            for (String num : sortedNumbersArray) {
+                System.out.print(num + " ");
+            }
+            System.out.println();
+
+            clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+11. Client and server .echo program
+
+Server Code:
+import java.io.*;
+import java.net.*;
+
+public class EchoServer {
+    public static void main(String[] args) {
+        final int PORT = 8080;
+        
+        try {
+            ServerSocket serverSocket = new ServerSocket(PORT);
+            System.out.println("Server started. Listening on port " + PORT);
+            
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Client connected: " + clientSocket.getInetAddress().getHostAddress());
+                
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                
+                String message = in.readLine();
+                System.out.println("Received from client: " + message);
+                
+                out.println("Server echoed: I have received the message :- " + message);
+                
+                in.close();
+                out.close();
+                clientSocket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+Client code:
+import java.io.*;
+import java.net.*;
+
+public class EchoClient {
+    public static void main(String[] args) throws UnknownHostException {
+        final String SERVER_ADDRESS = "localhost";
+        final int PORT = 8080;
+        
+        try {
+            Socket socket = new Socket(SERVER_ADDRESS, PORT);
+            
+            BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            
+            System.out.print("Enter message: ");
+            String message = userInput.readLine();
+            out.println(message);
+            
+            String response = in.readLine();
+            System.out.println("Server response: " + response);
+            
+            userInput.close();
+            in.close();
+            out.close();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+
