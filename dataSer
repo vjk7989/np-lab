@@ -1,0 +1,60 @@
+import java.net.*;
+import java.io.*;
+import java.util.Arrays;
+
+public class SortServer {
+    public static void main(String[] args) {
+        final int PORT = 9876;  // Port to listen on
+        final int BUFFER_SIZE = 1024;  // Buffer size for UDP packets
+
+        try (DatagramSocket socket = new DatagramSocket(PORT)) {
+            // Configure socket options
+            socket.setSoTimeout(30000);  // 30-second timeout
+            socket.setReceiveBufferSize(BUFFER_SIZE);
+            socket.setSendBufferSize(BUFFER_SIZE);
+
+            System.out.println("Sort Server is listening on port " + PORT);
+
+            while (true) {
+                // Receive incoming packet
+                byte[] buffer = new byte[BUFFER_SIZE];
+                DatagramPacket incomingPacket = new DatagramPacket(buffer, BUFFER_SIZE);
+                socket.receive(incomingPacket);
+
+                // Extract data and sort it
+                String receivedData = new String(incomingPacket.getData(), 0, incomingPacket.getLength());
+                String[] stringNumbers = receivedData.trim().split(",");
+                int[] numbers = new int[stringNumbers.length];
+                for (int i = 0; i < stringNumbers.length; i++) {
+                    numbers[i] = Integer.parseInt(stringNumbers[i].trim());
+                }
+                Arrays.sort(numbers);
+
+                // Prepare response data
+                StringBuilder responseBuilder = new StringBuilder();
+                for (int number : numbers) {
+                    responseBuilder.append(number).append(",");
+                }
+                String responseData = responseBuilder.toString().replaceAll(",$", "");  // Remove trailing comma
+
+                // Send response back to the client
+                InetAddress clientAddress = incomingPacket.getAddress();
+                int clientPort = incomingPacket.getPort();
+                DatagramPacket responsePacket = new DatagramPacket(
+                    responseData.getBytes(),
+                    responseData.length(),
+                    clientAddress,
+                    clientPort
+                );
+                socket.send(responsePacket);
+
+                System.out.println("Sorted numbers sent to client: " + responseData);
+            }
+
+        } catch (SocketTimeoutException e) {
+            System.out.println("Socket timed out.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
